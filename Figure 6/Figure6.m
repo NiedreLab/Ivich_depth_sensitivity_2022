@@ -1,4 +1,4 @@
-%%Code for Figure 7
+%%Code for Figure 6
 figure;
 x=[.75,1,1.5,2,2.5,3,3.5,4,5];
 
