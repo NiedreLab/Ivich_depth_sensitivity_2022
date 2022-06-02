@@ -13,10 +13,17 @@ cfg.vol=uint8(ones(200,200,200));
 % define source/det positions
 detradius=2;
 cfg.issrcfrom0=1;
+%Human Translation using 3 mm laser spot
+%comment out line 15 and uncomment lines 18-20
+% cfg.srctype='disk';
+% cfg.srcparam1=[6 0 0 0];
+% cfg.srcparam2=[0 0 0 0];
 cfg.srcpos=[100, 96, 0];
 cfg.srcdir=[0 0 1];
 cfg.detpos=[100, 104, 0 detradius];
 cfg.debuglevel='P';
+
+
 
 % define GPU settings
 cfg.gpuid=1;
