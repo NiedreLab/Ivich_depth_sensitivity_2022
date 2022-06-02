@@ -1,4 +1,4 @@
-%%Code for Figure 6
+%%Code for Figure 7
 figure;
 x=[.75,1,1.5,2,2.5,3,3.5,4,5];
 
@@ -42,6 +42,9 @@ semilogy(x,a,'-o','LineWidth',2, 'color','r');
 %NIR
  l=[4.802693557	2.735356562	0.50320082	0.100346833	0.028984412	0.011468684	0.005574578	0.003116871	0.001238871];
 semilogy(x,l,'-^','LineWidth',2, 'color',[173,102,57]./255);
+%disk source of 3mm diameter
+d=[0.085835256	0.072958215	0.044161978	0.023739508	0.012514159	0.006851213	0.003973988	0.002459736	0.001078904];
+semilogy(x,d,'-s','LineWidth',2, 'color',[51,25,0]./255)
 %Limits of Detection
 % Found by dividing 5x average noise (threshold) by the background signal
 bg=.01;
@@ -50,7 +53,7 @@ hold off
 ax = gca;
 ax.FontSize = 14;
 ylim([.000001,10]);
- legend('488nm','640nm','780nm','FontSize',14);
+ legend('488nm','640nm','780nm','780 nm, 3 mm spot size','FontSize',14);
 % title('0.3mmSD','FontSize',16);
 
 
@@ -67,6 +70,9 @@ hold on
 % %NIR
 l=[0.48485527	0.605032509	0.406997906	0.166363346	0.065725961	0.029603043	0.015240317	0.008758885	0.003575716];
 semilogy(x,l,'-^','LineWidth',2, 'color',[173,102,57]./255);
+%disk source of 3mm diameter
+d=[0.245780384	0.207030185	0.122890192	0.065412927	0.034770285	0.019292173	0.011331248	0.007070154	0.003146696];
+semilogy(x,d,'-s','LineWidth',2, 'color',[51,25,0]./255)
 % %Limits of Detection
 % % Found by dividing 5x average noise (threshold) by the background signal
  bg=.01;
@@ -117,6 +123,9 @@ semilogy(x,a,'-o','LineWidth',2, 'color','r');
 %NIR
 c=[0.069592903	0.077032895	0.083741419	0.073643392	0.055267394	0.037665156	0.025137776	0.016757995	0.008100194];
 semilogy(x,c,'-^','LineWidth',2, 'color',[173,102,57]./255)
+%disk source of 3mm diameter
+d=[0.210575272	0.191795166	0.133932389	0.085221586	0.053469266	0.034159745	0.02227612	0.015008265	0.007381099];
+semilogy(x,d,'-s','LineWidth',2, 'color',[51,25,0]./255);
 %Limits of detection
 % Found by dividing 5x average noise (threshold) by the background signal
 bg=.01;
@@ -163,6 +172,9 @@ semilogy(x,a,'-o','LineWidth',2, 'color','r');
 %NIR
 c=[0.037687667	0.040001904	0.042700805	0.041559323	0.03710598	0.030798432	0.024646001	0.018876983	0.010961666];
 semilogy(x,c,'-^','LineWidth',2, 'color',[173,102,57]./255)
+%disk source of 3mm diameter
+d=[0.042616366	0.046162779	0.049978143	0.047229204	0.03966415	0.031367297	0.023940784	0.018128296	0.010401246];
+semilogy(x,d,'-s','LineWidth',2, 'color',[51,25,0]./255)
 %Limits of detection
 % Found by dividing 5x average noise (threshold) by the background signal
 bg=.01;
