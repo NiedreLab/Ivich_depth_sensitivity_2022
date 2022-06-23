@@ -14,8 +14,8 @@ function varargout=mcxlab(varargin)
 %    [fluence,detphoton,vol,seed,trajectory]=mcxlab(cfg, option);
 %
 % Input:
-%    cfg: a struct, or struct array. Each element of cfg defines 
-%         the parameters associated with a simulation. 
+%    cfg: a struct, or struct array. Each element of cfg defines
+%         the parameters associated with a simulation.
 %         if cfg='gpuinfo': return the supported GPUs and their parameters,
 %         see sample script at the bottom
 %    option: (optional), options is a string, specifying additional options
@@ -42,7 +42,7 @@ function varargout=mcxlab(varargin)
 %                      the 2D plane in such case.
 %                      for 2D simulations, Example: <demo_mcxlab_2d.m>
 %
-%                      MCXLAB also accepts 4D arrays to define continuously varying media. 
+%                      MCXLAB also accepts 4D arrays to define continuously varying media.
 %                      The following formats are accepted
 %                        1 x Nx x Ny x Nz float32 array: mua values for each voxel (must use permute to make 1st dimension singleton)
 %                        2 x Nx x Ny x Nz float32 array: mua/mus values for each voxel (g/n use prop(2,:))
@@ -68,7 +68,7 @@ function varargout=mcxlab(varargin)
 %
 %== MC simulation settings ==
 %      cfg.seed:       seed for the random number generator (integer) [0]
-%                      if set to a uint8 array, the binary data in each column is used 
+%                      if set to a uint8 array, the binary data in each column is used
 %                      to seed a photon (i.e. the "replay" mode)
 %                      Example: <demo_mcxlab_replay.m>
 %      cfg.respin:     repeat simulation for the given time (integer) [1]
@@ -76,7 +76,7 @@ function varargout=mcxlab(varargin)
 %      cfg.isreflect:  [1]-consider refractive index mismatch, 0-matched index
 %      cfg.bc          per-face boundary condition (BC), a strig of 6 letters (case insensitive) for
 %                      bounding box faces at -x,-y,-z,+x,+y,+z axes;
-%		               overwrite cfg.isreflect if given.
+%               overwrite cfg.isreflect if given.
 %                      each letter can be one of the following:
 %                      '_': undefined, fallback to cfg.isreflect
 %                      'r': like cfg.isreflect=1, Fresnel reflection BC
@@ -105,10 +105,10 @@ function varargout=mcxlab(varargin)
 %                      of 1s and 0s, it enables multiple GPUs. For example, '1101'
 %                      allows to use the 1st, 2nd and 4th GPUs together.
 %                      Example: <mcx_gpu_benchmarks.m>
-%      cfg.workload    an array denoting the relative loads of each selected GPU. 
+%      cfg.workload    an array denoting the relative loads of each selected GPU.
 %                      for example, [50,20,30] allocates 50%, 20% and 30% photons to the
-%                      3 selected GPUs, respectively; [10,10] evenly divides the load 
-%                      between 2 active GPUs. A simple load balancing strategy is to 
+%                      3 selected GPUs, respectively; [10,10] evenly divides the load
+%                      between 2 active GPUs. A simple load balancing strategy is to
 %                      use the GPU core counts as the weight.
 %      cfg.isgpuinfo:  1-print GPU info, [0]-do not print
 %
@@ -121,16 +121,16 @@ function varargout=mcxlab(varargin)
 %                      'isotropic' - isotropic source, no param needed
 %                      'cone' - uniform cone beam, srcparam1(1) is the half-angle in radian
 %                      'gaussian' [*] - a collimated gaussian beam, srcparam1(1) specifies the waist radius (in voxels)
-%                      'planar' [*] - a 3D quadrilateral uniform planar source, with three corners specified 
+%                      'planar' [*] - a 3D quadrilateral uniform planar source, with three corners specified
 %                                by srcpos, srcpos+srcparam1(1:3) and srcpos+srcparam2(1:3)
 %                      'pattern' [*] - a 3D quadrilateral pattern illumination, same as above, except
 %                                srcparam1(4) and srcparam2(4) specify the pattern array x/y dimensions,
-%                                and srcpattern is a floating-point pattern array, with values between [0-1]. 
-%                                if cfg.srcnum>1, srcpattern must be a floating-point array with 
+%                                and srcpattern is a floating-point pattern array, with values between [0-1].
+%                                if cfg.srcnum>1, srcpattern must be a floating-point array with
 %                                a dimension of [srcnum srcparam1(4) srcparam2(4)]
 %                                Example: <demo_photon_sharing.m>
 %                      'pattern3d' [*] - a 3D illumination pattern. srcparam1{x,y,z} defines the dimensions,
-%                                and srcpattern is a floating-point pattern array, with values between [0-1]. 
+%                                and srcpattern is a floating-point pattern array, with values between [0-1].
 %                      'fourier' [*] - spatial frequency domain source, similar to 'planar', except
 %                                the integer parts of srcparam1(4) and srcparam2(4) represent
 %                                the x/y frequencies; the fraction part of srcparam1(4) multiplies
@@ -139,9 +139,9 @@ function varargout=mcxlab(varargin)
 %                                    S=0.5*[1+M*cos(2*pi*(fx*x+fy*y)+phi0)], (0<=x,y,M<=1)
 %                      'arcsine' - similar to isotropic, except the zenith angle is uniform
 %                                distribution, rather than a sine distribution.
-%                      'disk' [*] - a uniform disk source pointing along srcdir; the radius is 
+%                      'disk' [*] - a uniform disk source pointing along srcdir; the radius is
 %                               set by srcparam1(1) (in grid unit)
-%                      'fourierx' [*] - a general Fourier source, the parameters are 
+%                      'fourierx' [*] - a general Fourier source, the parameters are
 %                               srcparam1: [v1x,v1y,v1z,|v2|], srcparam2: [kx,ky,phi0,M]
 %                               normalized vectors satisfy: srcdir cross v1=v2
 %                               the phase shift is phi0*2*pi
@@ -149,15 +149,15 @@ function varargout=mcxlab(varargin)
 %                               srcparam1: [v1x,v1y,v1z,|v2|], srcparam2: [kx,ky,phix,phiy]
 %                               the phase shift is phi{x,y}*2*pi
 %                      'zgaussian' - an angular gaussian beam, srcparam1(0) specifies the variance in the zenith angle
-%                      'line' - a line source, emitting from the line segment between 
-%                               cfg.srcpos and cfg.srcpos+cfg.srcparam(1:3), radiating 
+%                      'line' - a line source, emitting from the line segment between
+%                               cfg.srcpos and cfg.srcpos+cfg.srcparam(1:3), radiating
 %                               uniformly in the perpendicular direction
-%                      'slit' [*] - a colimated slit beam emitting from the line segment between 
+%                      'slit' [*] - a colimated slit beam emitting from the line segment between
 %                               cfg.srcpos and cfg.srcpos+cfg.srcparam(1:3), with the initial  
 %                               dir specified by cfg.srcdir
 %                      'pencilarray' - a rectangular array of pencil beams. The srcparam1 and srcparam2
 %                               are defined similarly to 'fourier', except that srcparam1(4) and srcparam2(4)
-%                               are both integers, denoting the element counts in the x/y dimensions, respectively. 
+%                               are both integers, denoting the element counts in the x/y dimensions, respectively.
 %                               For exp., srcparam1=[10 0 0 4] and srcparam2[0 20 0 5] represent a 4x5 pencil beam array
 %                               spanning 10 grids in the x-axis and 20 grids in the y-axis (5-voxel spacing)
 %                      source types marked with [*] can be focused using the
@@ -173,7 +173,7 @@ function varargout=mcxlab(varargin)
 %                      -1 replay all detectors and save in separate volumes (output has 5 dimensions)
 %                       0 replay all detectors and sum all Jacobians into one volume
 %                       a positive number: the index of the detector to replay and obtain Jacobians
-%      cfg.voidtime:   for wide-field sources, [1]-start timer at launch, or 0-when entering 
+%      cfg.voidtime:   for wide-field sources, [1]-start timer at launch, or 0-when entering
 %                      the first non-zero voxel
 %
 %== Output control ==
@@ -192,13 +192,13 @@ function varargout=mcxlab(varargin)
 %      cfg.ismomentum: 1 to save photon momentum transfer,[0] not to save.
 %                      save as adding 'M' to cfg.savedetflag string
 %      cfg.issaveref:  [0]-save diffuse reflectance/transmittance in the non-zero voxels
-%                      next to a boundary voxel. The reflectance data are stored as 
+%                      next to a boundary voxel. The reflectance data are stored as
 %                      negative values; must pad zeros next to boundaries
 %                      Example: see the demo script at the bottom
 %      cfg.outputtype: 'flux' - fluence-rate, (default value)
-%                      'fluence' - fluence integrated over each time gate, 
+%                      'fluence' - fluence integrated over each time gate,
 %                      'energy' - energy deposit per voxel
-%                      'jacobian' or 'wl' - mua Jacobian (replay mode), 
+%                      'jacobian' or 'wl' - mua Jacobian (replay mode),
 %                      'nscat' or 'wp' - weighted scattering counts for computing Jacobian for mus (replay mode)
 %                      for type jacobian/wl/wp, example: <demo_mcxlab_replay.m>
 %                      and  <demo_replay_timedomain.m>
@@ -209,7 +209,7 @@ function varargout=mcxlab(varargin)
 %                    'R':  debug RNG, output fluence.data is filled with 0-1 random numbers
 %                    'M':  return photon trajectory data as the 5th output
 %                    'P':  show progress bar
-%      cfg.maxjumpdebug: [10000000|int] when trajectory is requested in the output, 
+%      cfg.maxjumpdebug: [10000000|int] when trajectory is requested in the output,
 %                     use this parameter to set the maximum position stored. By default,
 %                     only the first 1e6 positions are stored.
 %
@@ -218,8 +218,8 @@ function varargout=mcxlab(varargin)
 % Output:
 %      fluence: a struct array, with a length equals to that of cfg.
 %            For each element of fluence, fluence(i).data is a 4D array with
-%            dimensions specified by [size(vol) total-time-gates]. 
-%            The content of the array is the normalized fluence at 
+%            dimensions specified by [size(vol) total-time-gates].
+%            The content of the array is the normalized fluence at
 %            each voxel of each time-gate.
 %      detphoton: (optional) a struct array, with a length equals to that of cfg.
 %            Starting from v2018, the detphoton contains the below subfields:
@@ -240,7 +240,7 @@ function varargout=mcxlab(varargin)
 %            a byte array (uint8) for each detected photon. The column number
 %            of seed equals that of detphoton.
 %      trajectory: (optional), if given, mcxlab returns the trajectory data for
-%            each simulated photon. The output has 6 rows, the meanings are 
+%            each simulated photon. The output has 6 rows, the meanings are
 %               id:  1:    index of the photon packet
 %               pos: 2-4:  x/y/z/ of each trajectory position
 %                    5:    current photon packet weight
@@ -293,24 +293,20 @@ function varargout=mcxlab(varargin)
 %
 % License: GNU General Public License version 3, please read LICENSE.txt for details
 %
-
 try
     defaultocl=evalin('base','USE_MCXCL');
 catch
     defaultocl=0;
 end
-
 useopencl=defaultocl;
-
 if(nargin==2 && ischar(varargin{2}))
     if(strcmp(varargin{2},'preview'))
         [varargout{1:nargout}]=mcxpreview(varargin{1});
-	    return;
+   return;
     elseif(strcmp(varargin{2},'opencl'))
         useopencl=1;
     end
 end
-
 if(isstruct(varargin{1}))
     for i=1:length(varargin{1})
         castlist={'srcpattern','srcpos','detpos','prop','workload','srcdir'};
@@ -321,19 +317,15 @@ if(isstruct(varargin{1}))
         end
     end
 end
-
 if(useopencl==0)
     [varargout{1:nargout}]=mcx(varargin{1});
 else
     [varargout{1:nargout}]=mcxcl(varargin{1});
 end
-
 if(nargin==0)
     return;
 end
-
 cfg=varargin{1};
-
 if(~ischar(cfg))
     for i=1:length(varargout{1})
         if(isfield(cfg(i),'srcnum') && cfg(i).srcnum>1)
@@ -347,9 +339,7 @@ if(~ischar(cfg))
         end
     end
 end
-
 if(nargout>=2)
-
     for i=1:length(varargout{2})
         if(~isfield(cfg(i),'savedetflag'))
             cfg(i).savedetflag='DP';
@@ -359,10 +349,10 @@ if(nargout>=2)
             if(isfield(cfg(i),'ismomentum') && cfg(i).ismomentum)
                 cfg(i).savedetflag=[cfg(i).savedetflag,'M'];
             end
-	end
-	if(ndims(cfg(i).vol)==4)
-	    cfg(i).savedetflag='';
-	end
+end
+if(ndims(cfg(i).vol)==4)
+   cfg(i).savedetflag='';
+end
         if((~isfield(cfg(i),'issaveexit') || cfg(i).issaveexit~=2))
             medianum=size(cfg(i).prop,1)-1;
             detp=varargout{2}(i).data;
@@ -398,7 +388,7 @@ if(nargout>=2)
                 c0=c0+len;
             end
             if(regexp(cfg(i).savedetflag,'[vV]'))
-                newdetp.v=detp(c0:(c0+len-1),:)';	     %columns 4-2 from the right store the exit dirs
+                newdetp.v=detp(c0:(c0+len-1),:)';     %columns 4-2 from the right store the exit dirs
                 c0=c0+len;
             end
             if(regexp(cfg(i).savedetflag,'[wW]'))
@@ -419,7 +409,6 @@ if(nargout>=2)
     if(exist('newdetpstruct','var'))
         varargout{2}=newdetpstruct;
     end
-
     if(nargout>=5)
         for i=1:length(varargout{5})
             data=varargout{5}.data;
