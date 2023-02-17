@@ -1,5 +1,6 @@
 %PreProcessing for Red and Blue-green data
-%Make sure the preproc function is in the same folder as this code
+%make sure to add the location of the "proccodes" folder below.
+proccodes_lib = '';
 %After hitting run select the folder with the data you want to process.
 %Make sure the name of the folder with the data is named the same as the
 %data files
